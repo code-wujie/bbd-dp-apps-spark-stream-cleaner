@@ -32,31 +32,31 @@ import java.util.Map;
  */
 public class CleanerStreamingProcess extends BasicStreamingProcess {
 
-    private static final Logger LOGGER = LogManager.getLogger("com.bbd.flume.cleaner." + CleanerStreamingProcess.class.getSimpleName());
     private static final Context context = Context.getInstance();
     private CleanerServiceFacade facade;
     private KafkaProducerHandler kafkaProducerHandler;
-    private static final String processingSeedLogQueue = context.getString("BBD_DP_KAFKA_SEED_LOG_TOPIC", "");
-    private static final String processingSuccessQueue = context.getString("BBD_DP_KAFKA_CLEANER_SLOW_SUCCESS_TOPIC", "");
-    private static final String processingSuccessFastQueue = context.getString("BBD_DP_KAFKA_CLEANER_FAST_SUCCESS_TOPIC", "");
-    private static final String processingFailQueue = context.getString("BBD_DP_KAFKA_SEED_LOG_TOPIC", "");
+    private  String processingSeedLogQueue = context.getString("BBD_DP_KAFKA_SEED_LOG_TOPIC", "");
+    private  String processingSuccessQueue = context.getString("BBD_DP_KAFKA_CLEANER_SLOW_SUCCESS_TOPIC", "");
+    private  String processingSuccessFastQueue = context.getString("BBD_DP_KAFKA_CLEANER_FAST_SUCCESS_TOPIC", "");
+    private  String processingFailQueue = context.getString("BBD_DP_KAFKA_SEED_LOG_TOPIC", "");
 
     @Override
     public void process(Context context, Iterator<Map<String, Object>> messages) {
 
         List<ProducerRecord<String, String>> producerRecordList = new ArrayList<>();
         while (messages.hasNext()) {
-            try {
-                Long start = System.currentTimeMillis();
-                Map<String, Object> message = messages.next();
-                FacadeResponse response = facade.handle(message);
 
+            Long start = System.currentTimeMillis();
+            Map<String, Object> message = messages.next();
+            String uniqueId = MapUtil.getValue(message, Constants.BBDKEY.BBD_DATA_UNIQUE_ID, "").toString();
+            LogModel logModel = new LogModel(uniqueId, StreamingProcessStage.PROCESS_STAGE.CLEANER.toString());
+            try {
+                FacadeResponse response = facade.handle(message);
                 Long time = System.currentTimeMillis() - start;
 
                 //种子状态初始化
                 int bbdSeedState = 0;
-                String uniqueId = MapUtil.getValue(message, Constants.BBDKEY.BBD_DATA_UNIQUE_ID, "").toString();
-                LogModel logModel = new LogModel(uniqueId, StreamingProcessStage.PROCESS_STAGE.CLEANER.toString());
+
                 logModel.setResponseTime(time);
                 if (response.getStatusCode().isok()) {
                     //设置种子状态
@@ -72,10 +72,10 @@ public class CleanerStreamingProcess extends BasicStreamingProcess {
                             if (BbdInnerFlagUtil.isBackFill(data)) {
                                 //历史反填充数据,发送到普通通道处理
                                 logger.debug("processingSlowSuccessQueue {}", processingSuccessQueue);
-                                producerRecordList.add(new ProducerRecord<>(processingSuccessQueue, JsonUtil.toString(data)));
+                                kafkaProducerHandler.push(processingSuccessQueue, JsonUtil.toString(data));
                             } else {
                                 logger.debug("processingFastSuccessQueue {}", processingSuccessFastQueue);
-                                producerRecordList.add(new ProducerRecord<>(processingSuccessFastQueue, JsonUtil.toString(data)));
+                                kafkaProducerHandler.push(processingSuccessFastQueue, JsonUtil.toString(data));
                             }
                         }
                     }
@@ -88,42 +88,47 @@ public class CleanerStreamingProcess extends BasicStreamingProcess {
 
                     message.put(Constants.BBDKEY.BBD_ERROR_PROCESS, StreamingProcessStage.PROCESS_STAGE.CLEANER.toString());
                     message.put(Constants.BBDKEY.BBD_ERROR_LOG, response.getErrors());
-                    producerRecordList.add(new ProducerRecord<>(processingFailQueue, JsonUtil.toString(message)));
+                    kafkaProducerHandler.push(processingFailQueue, JsonUtil.toString(message));
 
                     logModel.setStatusCode(StreamingProcessStage.ProcessStageCode.DP_CLEANER_PROCESS_ERO);
                     logModel.setErrorMessage(response.getErrors());
                 }
-
-                printFlumeLog(context, logModel);
 
                 //处理种子日志
                 if (bbdSeedState != 0) {
                     String log = BbdSeedLogApi.getLogs(bbdSeedState, message);
                     if (log != null) {
                         //数据不是历史数据，更改种子状态
-                        producerRecordList.add(new ProducerRecord<>(processingSeedLogQueue, log));
+                        kafkaProducerHandler.push(processingSeedLogQueue, log);
                         logger.debug("seed change state for : " + bbdSeedState);
                     }
                 }
             } catch (Exception e) {
                 logger.error("清洗处理失败!", e);
+                logModel.setErrorMessage(e.getMessage());
+                logModel.setStatusCode("");
+                printFlumeLog(context, logModel);
             }
         }
-        kafkaProducerHandler.push(producerRecordList);
         kafkaProducerHandler.flush();
     }
 
     @Override
     public <T> void printFlumeLog(Context context, LogModel<T> log) {
-
+        Logger LOGGER = LogManager.getLogger("com.bbd.flume.cleaner." + CleanerStreamingProcess.class.getSimpleName());
         LOGGER.info(JsonUtil.toString(log));
 
     }
 
     @Override
     public void dInit(Context context) {
-        String brokerList  = context.getString("BBD_DP_KAFKA_BROKER_LIST","");
 
+        processingSeedLogQueue = context.getString("BBD_DP_KAFKA_SEED_LOG_TOPIC", "");
+        processingSuccessQueue = context.getString("BBD_DP_KAFKA_CLEANER_SLOW_SUCCESS_TOPIC", "");
+        processingSuccessFastQueue = context.getString("BBD_DP_KAFKA_CLEANER_FAST_SUCCESS_TOPIC", "");
+        processingFailQueue = context.getString("BBD_DP_KAFKA_SEED_LOG_TOPIC", "");
+
+        String brokerList  = context.getString("BBD_DP_KAFKA_BROKER_LIST","");
         this.kafkaProducerHandler = KafkaProducerHandler.getInstance(brokerList);
 
         String zkAddress = context.getString("BBD_DP_DUBBO_PROVIDER_ZK", "zookeeper://10.28.102.151:2181?backup=10.28.102.152:2181,10.28.102.153:2181");
