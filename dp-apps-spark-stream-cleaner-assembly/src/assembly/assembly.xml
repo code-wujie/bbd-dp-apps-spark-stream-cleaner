@@ -1,0 +1,31 @@
+<assembly>
+	<id>assembly</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>true</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>src/assembly/bin</directory>
+			<outputDirectory>bin</outputDirectory>
+			<fileMode>0755</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/${deploy.type}/resources</directory>
+			<outputDirectory>conf</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0744</directoryMode>
+			<excludes>  
+                <exclude>META-INF/*</exclude>  
+                <exclude>META-INF</exclude>  
+            </excludes>  
+		</fileSet>
+	</fileSets>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>libs</outputDirectory>
+			<directoryMode>0744</directoryMode>
+		</dependencySet>
+	</dependencySets>
+</assembly>
