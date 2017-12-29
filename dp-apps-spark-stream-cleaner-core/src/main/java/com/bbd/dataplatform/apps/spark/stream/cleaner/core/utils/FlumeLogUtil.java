@@ -52,9 +52,9 @@ public class FlumeLogUtil {
 	public static LogModel<String> getErrorLog(FacadeResponse response, long responseTime) {
 		String uniqueId = getDataUniqueId(response.getData());
 		if (uniqueId != null && uniqueId.length() > 0) {
-			LogModel<String> log = new LogModel<>(uniqueId, PROCESS_STAGE.CLEANER.toString());
+			LogModel log = new LogModel<>(uniqueId, PROCESS_STAGE.CLEANER.toString());
 			log.setResponseTime(responseTime);
-			log.setErrorMessage("清洗处理成功");
+			log.setErrorMessage("清洗处理失败");
 			log.setStatusCode(ProcessStageCode.DP_CLEANER_PROCESS_ERO);
 			return log;
 		}
