@@ -12,7 +12,7 @@
             <Property name="processor.type">failover</Property>
             <Property name="sinks">spark_flume_log</Property>
             <Property name="spark_flume_log.type">avro</Property>
-            <Property name="spark_flume_log.hostname">dataompro02.test.bbdops.com</Property>
+            <Property name="spark_flume_log.hostname">flume.bbdops.com</Property>
             <Property name="spark_flume_log.port">51518</Property>
             <Property name="spark_flume_log.batch-size">1000</Property>
             <JSONLog4j2Layout application="dp-apps-streaming-spark-cleaner"/>

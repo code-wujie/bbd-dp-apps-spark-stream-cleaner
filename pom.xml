@@ -24,6 +24,9 @@
         <provider-cleaner-facade.version>1.0.0</provider-cleaner-facade.version>
         <!-- cdh library version -->
         <cdh.spark.version>1.6.0-cdh5.10.1</cdh.spark.version>
+        <!--fume-ng-->
+        <log4j-flume-ng.version>2.8.2</log4j-flume-ng.version>
+        <flume-ng.version>1.7.0</flume-ng.version>
     </properties>
 
     <dependencyManagement>
@@ -91,6 +94,18 @@
                 <artifactId>spark-streaming-kafka_2.10</artifactId>
                 <version>${cdh.spark.version}</version>
                 <scope>runtime</scope>
+            </dependency>
+
+            <!--flume-ng-->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-flume-ng</artifactId>
+                <version>${log4j-flume-ng.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flume</groupId>
+                <artifactId>flume-ng-embedded-agent</artifactId>
+                <version>${flume-ng.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

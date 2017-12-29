@@ -44,6 +44,14 @@
             <groupId>com.bbd.dataplatform.apps</groupId>
             <artifactId>bbd-dp-apps-common-utils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-flume-ng</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flume</groupId>
+            <artifactId>flume-ng-embedded-agent</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
