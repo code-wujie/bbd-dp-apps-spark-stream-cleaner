@@ -81,19 +81,19 @@
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-core_2.10</artifactId>
                 <version>${cdh.spark.version}</version>
-                <scope>runtime</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-streaming_2.10</artifactId>
                 <version>${cdh.spark.version}</version>
-                <scope>runtime</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-streaming-kafka_2.10</artifactId>
                 <version>${cdh.spark.version}</version>
-                <scope>runtime</scope>
+                <scope>provided</scope>
             </dependency>
 
             <!--flume-ng-->
