@@ -58,11 +58,6 @@
             </dependency>
             <dependency>
                 <groupId>com.bbd.dataplatform.apps</groupId>
-                <artifactId>bbd-dp-apps-common-seedlog-sdk</artifactId>
-                <version>${common-seed-log.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.bbd.dataplatform.apps</groupId>
                 <artifactId>bbd-dp-apps-common-kafka</artifactId>
                 <version>${common-kafka.version}</version>
             </dependency>
@@ -70,11 +65,6 @@
                 <groupId>com.bbd.dataplatform.apps</groupId>
                 <artifactId>bbd-dp-apps-common-constants</artifactId>
                 <version>${common-constants.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.bbd.dataplatform.apps</groupId>
-                <artifactId>bbd-dp-apps-common-utils</artifactId>
-                <version>${common-utils.version}</version>
             </dependency>
             <!-- provided library start -->
             <dependency>

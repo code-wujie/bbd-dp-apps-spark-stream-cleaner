@@ -41,10 +41,8 @@
             <groupId>com.bbd.dataplatform.apps</groupId>
             <artifactId>bbd-dp-apps-common-constants</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.bbd.dataplatform.apps</groupId>
-            <artifactId>bbd-dp-apps-common-utils</artifactId>
-        </dependency>
+
+        <!--log4j flume-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-flume-ng</artifactId>

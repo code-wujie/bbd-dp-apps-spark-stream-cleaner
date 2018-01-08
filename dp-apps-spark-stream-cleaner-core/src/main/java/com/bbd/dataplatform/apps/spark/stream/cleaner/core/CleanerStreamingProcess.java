@@ -111,12 +111,12 @@ public class CleanerStreamingProcess extends BasicStreamingProcess {
     @Override
     public void dInit(Context context) {
 
-        String brokers = context.getString(Constants.PARAM.BBD_DP_KAFKA_BROKER_LIST);
-        this.kafkaProducerHandler = KafkaProducerHandler.getInstance(brokers);
-
         String consumer = context.getString(Constants.PARAM.BBD_DP_DUBBO_CONSUMER_NAME);
         String address = context.getString(Constants.PARAM.BBD_DP_DUBBO_ADDRESS_HOSTS);
         this.facade = DubboReferenceUtil.getReference(address, consumer, CleanerServiceFacade.class);
+
+        String brokers = context.getString(Constants.PARAM.BBD_DP_KAFKA_BROKER_LIST);
+        this.kafkaProducerHandler = KafkaProducerHandler.getInstance(brokers);
 
     }
 }
