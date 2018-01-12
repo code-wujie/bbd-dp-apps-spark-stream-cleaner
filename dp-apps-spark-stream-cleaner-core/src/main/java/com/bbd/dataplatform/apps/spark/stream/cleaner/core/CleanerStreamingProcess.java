@@ -2,6 +2,7 @@ package com.bbd.dataplatform.apps.spark.stream.cleaner.core;
 
 import com.bbd.dataplatform.apps.common.config.Context;
 import com.bbd.dataplatform.apps.common.constants.Constants;
+import com.bbd.dataplatform.apps.common.constants.Constants.BBDKEY;
 import com.bbd.dataplatform.apps.common.constants.Constants.NAMESPACE;
 import com.bbd.dataplatform.apps.common.dubbo.DubboReferenceUtil;
 import com.bbd.dataplatform.apps.common.json.JsonUtil;
@@ -16,12 +17,16 @@ import com.bbd.dataplatform.apps.spark.stream.cleaner.core.utils.SeedLogUtil;
 import com.bbd.dataplatform.provider.cleaner.facade.CleanerServiceFacade;
 import com.bbd.dataplatform.provider.common.facade.mode.FacadeResponse;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @Author: Rand
@@ -31,7 +36,9 @@ import java.util.Map;
  */
 public class CleanerStreamingProcess extends BasicStreamingProcess {
 
-    private CleanerServiceFacade facade;
+	private static final long serialVersionUID = -3210520087731479662L;
+	
+	private CleanerServiceFacade facade;
     private KafkaProducerHandler kafkaProducerHandler;
     //清洗快速通道队列
     private static final String BBD_DP_KAFKA_CLEANER_FAST_SUCCESS_TOPIC = "BBD_DP_KAFKA_CLEANER_FAST_SUCCESS_TOPIC";
@@ -54,7 +61,6 @@ public class CleanerStreamingProcess extends BasicStreamingProcess {
     public void process(Context context, Iterator<Map<String, Object>> messages) {
 
         while (messages.hasNext()) {
-
             //读取数据
             Map<String, Object> message = messages.next();
             //业务处理
@@ -68,19 +74,19 @@ public class CleanerStreamingProcess extends BasicStreamingProcess {
                 //数据处理
                 if (response.getStatusCode().isok()) {
                     for (Map<String, Object> data : response.getDatas()) {
-                        //发送数据至Kafka
-                        /**清洗处理：
-                         * 快速通道处理时，如果为历史反填充数据则发送到普通通道处理,其他数据发送到快速通道
-                         *普通通道处理时，可以将两个通道配置为同一个队列
-                         * */
+                        /**清洗处理： 快速通道处理时，如果为历史反填充数据则发送到普通通道处理,其他数据发送到快速通道,普通通道处理时，可以将两个通道配置为同一个队列 **/
                         if (BbdInnerFlagUtil.isBackFill(data)) {
+                        	//当数据存在指纹信息的情况下，重新设置数据的指纹信息
+                        	if(StringUtils.isNotBlank(MapUtils.getString(message, BBDKEY.BBD_DATA_UNIQUE_ID))){
+                            	data.put(BBDKEY.BBD_DATA_UNIQUE_ID, DigestUtils.md5Hex(UUID.randomUUID().toString()));
+                        	}
                             //历史反填充数据,发送到普通通道处理
                             this.kafkaProducerHandler.push(context.getString(Constants.PARAM.BBD_DP_KAFKA_QUEUE_SUCCESS), JsonUtil.toString(data));
                         } else {
                             this.kafkaProducerHandler.push(context.getString(BBD_DP_KAFKA_CLEANER_FAST_SUCCESS_TOPIC), JsonUtil.toString(data));
                         }
+                        printFlumeLog(context, FlumeLogUtil.getSuccessLog(message, data, costTime));
                     }
-                    printFlumeLog(context, FlumeLogUtil.getSuccessLog(response, costTime));
                 } else {
                     this.kafkaProducerHandler.push(context.getString(Constants.PARAM.BBD_DP_KAFKA_QUEUE_PENDING), PendingDataUtil.get(response));
                     printFlumeLog(context, FlumeLogUtil.getErrorLog(response, costTime));

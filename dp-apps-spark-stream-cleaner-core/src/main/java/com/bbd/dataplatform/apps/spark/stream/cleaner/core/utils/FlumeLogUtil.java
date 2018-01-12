@@ -31,10 +31,12 @@ public class FlumeLogUtil {
 	 * @param responseTime
 	 * @return
 	 */
-	public static LogModel<String> getSuccessLog(FacadeResponse response, long responseTime){
-		String uniqueId = getDataUniqueId(response.getData());
-		if(uniqueId != null && uniqueId.length() > 0){
-			LogModel<String> log = new LogModel<>(uniqueId, PROCESS_STAGE.CLEANER.toString());
+	public static LogModel<String> getSuccessLog(Map<String, Object> message, Map<String, Object> data, long responseTime){
+		String p_uniqueId = getDataUniqueId(message);
+		String c_uniqueId = getDataUniqueId(data);
+		if(p_uniqueId != null && p_uniqueId.length() > 0){
+			if(p_uniqueId.equals(c_uniqueId)){ c_uniqueId = null; }
+			LogModel<String> log = new LogModel<>(p_uniqueId, c_uniqueId, PROCESS_STAGE.CLEANER.toString());
 			log.setResponseTime(responseTime);
 			log.setErrorMessage("清洗处理成功");
 			log.setStatusCode(ProcessStageCode.DP_CLEANER_PROCESS_SUC);
@@ -52,7 +54,7 @@ public class FlumeLogUtil {
 	public static LogModel<String> getErrorLog(FacadeResponse response, long responseTime) {
 		String uniqueId = getDataUniqueId(response.getData());
 		if (uniqueId != null && uniqueId.length() > 0) {
-			LogModel log = new LogModel<>(uniqueId, PROCESS_STAGE.CLEANER.toString());
+			LogModel<String> log = new LogModel<>(uniqueId, PROCESS_STAGE.CLEANER.toString());
 			log.setResponseTime(responseTime);
 			log.setErrorMessage("清洗处理失败");
 			log.setStatusCode(ProcessStageCode.DP_CLEANER_PROCESS_ERO);
