@@ -58,11 +58,6 @@
             </dependency>
             <dependency>
                 <groupId>com.bbd.dataplatform.apps</groupId>
-                <artifactId>bbd-dp-apps-common-seedlog-sdk</artifactId>
-                <version>${common-seed-log.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.bbd.dataplatform.apps</groupId>
                 <artifactId>bbd-dp-apps-common-kafka</artifactId>
                 <version>${common-kafka.version}</version>
             </dependency>
@@ -71,29 +66,24 @@
                 <artifactId>bbd-dp-apps-common-constants</artifactId>
                 <version>${common-constants.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.bbd.dataplatform.apps</groupId>
-                <artifactId>bbd-dp-apps-common-utils</artifactId>
-                <version>${common-utils.version}</version>
-            </dependency>
             <!-- provided library start -->
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-core_2.10</artifactId>
                 <version>${cdh.spark.version}</version>
-                <scope>runtime</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-streaming_2.10</artifactId>
                 <version>${cdh.spark.version}</version>
-                <scope>runtime</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-streaming-kafka_2.10</artifactId>
                 <version>${cdh.spark.version}</version>
-                <scope>runtime</scope>
+                <scope>provided</scope>
             </dependency>
 
             <!--flume-ng-->

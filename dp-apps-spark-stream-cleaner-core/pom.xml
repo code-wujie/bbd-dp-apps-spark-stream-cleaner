@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dp-apps-spark-stream-cleaner-core</artifactId>
+    <name>dp-apps-spark-stream-cleaner-core</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,10 +41,8 @@
             <groupId>com.bbd.dataplatform.apps</groupId>
             <artifactId>bbd-dp-apps-common-constants</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.bbd.dataplatform.apps</groupId>
-            <artifactId>bbd-dp-apps-common-utils</artifactId>
-        </dependency>
+
+        <!--log4j flume-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-flume-ng</artifactId>
@@ -51,6 +50,11 @@
         <dependency>
             <groupId>org.apache.flume</groupId>
             <artifactId>flume-ng-embedded-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-kafka_2.10</artifactId>
         </dependency>
     </dependencies>
 
