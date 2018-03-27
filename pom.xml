@@ -21,6 +21,7 @@
         <common-constants.version>1.0.0</common-constants.version>
         <common-utils.version>1.0.0</common-utils.version>
         <common-kafka.version>1.0.0</common-kafka.version>
+        <common-scrpts.version>1.0.0</common-scrpts.version>
         <provider-cleaner-facade.version>1.0.0</provider-cleaner-facade.version>
         <!-- cdh library version -->
         <cdh.spark.version>1.6.0-cdh5.10.1</cdh.spark.version>
