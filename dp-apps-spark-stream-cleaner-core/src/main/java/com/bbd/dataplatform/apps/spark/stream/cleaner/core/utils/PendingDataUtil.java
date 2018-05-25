@@ -14,4 +14,10 @@ public class PendingDataUtil {
 		data.put(BBDKEY.BBD_ERROR_LOG, response.getErrors());
 		return data;
 	}
+
+	public static Map<String, Object> get(Map<String, Object> data, Exception exception) {
+		data.put(BBDKEY.BBD_ERROR_PROCESS, PROCESS_STAGE.CLEANER_VALIDATE);
+		data.put(BBDKEY.BBD_ERROR_LOG, exception.getMessage());
+		return data;
+	}
 }

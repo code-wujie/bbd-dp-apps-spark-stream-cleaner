@@ -99,6 +99,7 @@ public class CleanerStreamingProcess extends BasicStreamingProcess {
             } catch (Exception e) {
                 //数据处理异常，直接放到待定库
                 logger.error("spark stream cleaner 出现严重的异常：", e);
+                this.kafkaProducerHandler.push(context.getString(Constants.PARAM.BBD_DP_KAFKA_QUEUE_PENDING), PendingDataUtil.get(message, e));
                 printFlumeLog(context, FlumeLogUtil.getExceptionLog(message, e));
             }
         }
