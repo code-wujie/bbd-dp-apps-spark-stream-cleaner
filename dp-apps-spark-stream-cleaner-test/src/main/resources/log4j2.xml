@@ -2,7 +2,7 @@
 <Configuration status="warn" name="MyApp" packages="org.apache.logging.log4j">
     <appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="[%t]%d %-5p [%c] %m%n"/>
         </Console>
         <Flume name="FlumeAppend" ignoreExceptions="true" compress="false" type="embedded">
@@ -23,7 +23,7 @@
         <logger name="bbd.flume.stream.trace.log" level="info">
             <AppenderRef ref="FlumeAppend"/>
         </logger>
-        <Root level="info"> <!-- 全局配置 -->
+        <Root level="debug"> <!-- 全局配置 -->
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
